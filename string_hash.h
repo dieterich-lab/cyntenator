@@ -1,4 +1,4 @@
-#include <ext/hash_map>
+#include <map>
 
 using std::string;
 
@@ -23,7 +23,7 @@ struct string_hasher_eql_op {
 
 template<class T> class shmap {
 public:
-   typedef __gnu_cxx::hash_map<string,T,string_hasher_op,string_hasher_eql_op> map;
+   typedef std::map<string,T,string_hasher_op,string_hasher_eql_op> map;
    typedef typename map::const_iterator cit;
    typedef typename map::iterator it;
 };

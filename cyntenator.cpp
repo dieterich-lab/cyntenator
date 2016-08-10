@@ -1,7 +1,6 @@
 #include<iostream>
 #include<string>
 #include<list>
-#include<ext/hash_map> 
 #include "genome.h"
 #include "localign.h"
 #include "flow.h"

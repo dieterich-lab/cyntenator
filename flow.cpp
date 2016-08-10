@@ -56,9 +56,7 @@ string program_flow::align( string subtree , int nr ){
   string ret = "alignment" + anr;
 
   
-  alignment_set A;
-  alignment_set B;
-  alignment_set C;
+  alignment_set A, B, C;
 
   /***************************************************** 
   *
@@ -162,22 +160,22 @@ program_flow::program_flow(int argc,  char** argv){
       
       vector<string> order = get_alignment_order( tree );
       
-      for( int i = 0; i < order.size(); i++ ){
+      for( int i = 0; i < order.size(); ++i ){
 	
-	string s    =  order[i];
+	      string s    =  order[i];
 
-	if( i == order.size()-1 )    // in the last round print_all is forced to be set to 1 
-	  print_all = 1;
+	      if( i == order.size()-1 )    // in the last round print_all is forced to be set to 1 
+	        print_all = 1;
 
-	string repl =  align(s, i);
+	      string repl =  align(s, i);
 	
-	for(int j = i; j < order.size(); j++ ){
-	  order[j] = replace( order[j], s, repl );
-	}	
+	      for(int j = i; j < order.size(); ++j ){
+	        order[j] = replace( order[j], s, repl );
+	      }	
       }     
     }
     else{
-       print_help();
+      print_help();
     }    
   }  
 }

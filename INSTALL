@@ -1,0 +1,36 @@
+g++ -Wno-deprecated cyntenator.cpp localign.cpp genome.cpp flow.cpp species_tree.cpp -o cyntenator
+
+
+
+########################################################
+#
+# 1) Phylogenetic scoring function
+# 
+#    The following 2 runs are test runs to see, whether 
+#    cyntenator can read pirwise alignments
+#
+# 1.1)  compute pairwise, read pairwise, compute tripple
+#
+#########################################################
+
+./cyntenator -t "(HSX.txt MMX.txt)"     -h phylo HSCFMM.blast  "((HSX.txt:1.2 MMX.txt:1.3):0.5 CFX.txt:2.5):1" > human_mouse
+./cyntenator -t "(human_mouse CFX.txt)" -h phylo HSCFMM.blast  "((HSX.txt:1.2 MMX.txt:1.3):0.5 CFX.txt:2.5):1" > test1.txt 
+
+#########################################################
+#
+# 1.2) compute pairwise, compute tripple
+#
+#########################################################
+
+./cyntenator -last  -t "((HSX.txt MMX.txt) CFX.txt)" -h phylo HSCFMM.blast  "((HSX.txt:1.2 MMX.txt:1.3):0.5 CFX.txt:2.5):1" > test2.txt
+
+
+
+
+##########################################################
+#
+# 2) BLAST alignment, analogously to SYNTENATOR
+#
+##########################################################
+
+./cyntenator  -t "(HSX.txt MMX.txt)" -h blast HSCFMM.blast 

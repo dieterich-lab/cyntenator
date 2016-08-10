@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iterator>
 #include <utility>
 #include <map>
 #include <cstddef>  // size_t
@@ -39,13 +40,13 @@ void local_aligner::smith_waterman( const alignment& X, const alignment& Y, alig
   S = scoring_matrix( n,m );
   T = trac_back_matric( n, m);
   
-  for( int i = 0; i < n+1; i++ ) S[i][0] = 0;   // INITIALIZATION
+  for( int i = 0; i < n+1; ++i ) S[i][0] = 0;   // INITIALIZATION
    S[0] = vector<double>(m+1,0); 
 
  
 
-  for( int i = 1; i < n+1; i++ ){
-    for( int j = 1; j < m+1; j++ ){
+  for( int i = 1; i < n+1; ++i ){
+    for( int j = 1; j < m+1; ++j ){
       
       double a = S[i-1][j] + scorer.get_gap();                          //  UP
       double b = S[i][j-1] + scorer.get_gap();                          //  LEFT
@@ -93,7 +94,7 @@ void local_aligner::smith_waterman( const alignment& X, const alignment& Y, alig
 
     local_maxima.sort( comparePeaks);
 
-    for( list<peak>::const_iterator it = local_maxima.begin(); it != local_maxima.end(); it++  ){  
+    for( list<peak>::const_iterator it = local_maxima.begin(); it != local_maxima.end(); ++it  ){  
          
       peak         p        = *it; 
       double       s        = p.get_score(); 
@@ -293,7 +294,7 @@ scoring_scheme::scoring_scheme( string modus, const char* file, string alignment
 
   while( getline(infile,s) ){   
     if( i % 100000 == 0 )cerr << "." ;
-    i++;
+    ++i;
     vector<string> vec = split( s );
     	if( mode == "phylo" ){
 	  string query = vec[0];
@@ -308,7 +309,7 @@ scoring_scheme::scoring_scheme( string modus, const char* file, string alignment
   }
 
    cerr <<  "Reading " << file << " " ;
-  for(map<string, map<string,int> >::const_iterator it = scoring_table.begin(); it!= scoring_table.end();it++ ){
+  for(map<string, map<string,int> >::const_iterator it = scoring_table.begin(); it!= scoring_table.end(); ++it ){
     string id = it->first;
     int score  =  scoring_table[ id ][id];
     if( score == 0 )  scoring_table[ id ][id] = 2000;
@@ -341,11 +342,11 @@ void scoring_scheme::read_species( string s ){
   int j = -1;
   vector<string> species_set; 
 
-  for( int i = 0; i < s.size(); i++){  // split "() "
+  for( int i = 0; i < s.size(); ++i){  // split "() "
     	
     if( is_paranthese(s[i]) || is_space(s[i])  || i ==  s.size() -1){
       if(  i ==  s.size() -1){
-	 i++; // the last string has to be saved separatedly
+	 ++i; // the last string has to be saved separately
 	//cerr <<  s.substr(j+1,i-j-1) << "\n";
 	   species_set.push_back( s.substr(j+1,i-j-2));
 	  j = i;
@@ -357,7 +358,7 @@ void scoring_scheme::read_species( string s ){
 	}
     }
   
-  for( int i = 0; i < species_set.size(); i++ ){ // read data into map
+  for( int i = 0; i < species_set.size(); ++i ){ // read data into map
    string species = species_set[i];
    if( species != ""){
      ifstream infile( species.c_str() );
@@ -365,7 +366,7 @@ void scoring_scheme::read_species( string s ){
      getline(infile,s);
      vector<string> vec = split( s );
      if( vec[0] == "#alignment" ){
-       for(  int j = 1; j < vec.size(); j++)
+       for(  int j = 1; j < vec.size(); ++j)
 	 read_single_species( vec[j] , species);
      }   
      else{
@@ -432,8 +433,8 @@ void scoring_scheme::phylogentic_parameter_adaptation( const alignment& X, const
       double subtree_size = 0; 
       double scaling_factor = 0;
       
-      for( int i = 0; i < spec_X.size() ; i++ ){   // this computes a mean scaling factor for both sets of alignments 
-	for( int j = 0; j < spec_Y.size(); j++ ){
+      for( int i = 0; i < spec_X.size() ; ++i ){   // this computes a mean scaling factor for both sets of alignments 
+	for( int j = 0; j < spec_Y.size(); ++j ){
 	  
 	  subtree_size +=  species_tree.get_subtree_size( spec_X[i] , spec_Y[j] );
 	  
@@ -453,7 +454,7 @@ void scoring_scheme::phylogentic_parameter_adaptation( const alignment& X, const
 	gap       = base_gap * ( 1 -  subtree_size);
 	threshold = base_threshold * subtree_size; // *subtree_size;
       }
-      cerr << "Distance: "<< subtree_size << "\nTheta:  "<< threshold << "\tGap: "  << gap << "\tMissmatch: " << miss << "\n";
+      cerr << "Distance: "<< subtree_size << "\nTheta:  "<< threshold << "\tGap: "  << gap << "\tMismatch: " << miss << "\n";
     }
   }
 
@@ -466,11 +467,11 @@ double scoring_scheme::scoreBLAST( const column& a, const column& b ){
   map<string,location> B = b.get_locs();
   double sum = 0;
 
-  for( map<string,location>::iterator it = A.begin(); it != A.end(); it++){
+  for( map<string,location>::iterator it = A.begin(); it != A.end(); ++it){
     
     location  pa = it->second;
     
-     for( map<string,location>::iterator jt = B.begin(); jt != B.end(); jt++){
+     for( map<string,location>::iterator jt = B.begin(); jt != B.end(); ++jt){
  
        
        location  pb = jt->second;
@@ -552,8 +553,8 @@ double scoring_scheme::scoreID( const column& a, const column& b ){
   map<string,location> B = b.get_locs();
 
   double sum = 0;
-  for( map<string,location>::iterator it = A.begin(); it != A.end(); it++){
-     for( map<string,location>::iterator jt = B.begin(); jt != B.end(); jt++){
+  for( map<string,location>::iterator it = A.begin(); it != A.end(); ++it){
+     for( map<string,location>::iterator jt = B.begin(); jt != B.end(); ++jt){
 
        string id_a = (it->second).getID();  // it->second denotes a location
        string id_b = (jt->second).getID();
@@ -578,7 +579,11 @@ double scoring_scheme::scoreID( const column& a, const column& b ){
     return scoreBLAST(a, b);
   else if( mode == "id")
     return scoreID(a, b);
-  
+  else
+  {
+    std::cerr << "FATAL ERROR: Unexpected internal value. Please report this!\n\n\n";
+    exit(1);
+  }
 }
 
 
@@ -603,9 +608,9 @@ list<string> scoring_scheme::get_all_homologs( string query){
     if( target_map != scoring_table.end() ){   
       
       map<string, int> targets = target_map->second;
-       for( map<string, int>::const_iterator jt = targets.begin(); jt != targets.end(); jt++ ){
+       for( map<string, int>::const_iterator jt = targets.begin(); jt != targets.end(); ++jt ){
       //shmap<double>::map targets = target_map->second;
-      //for( shmap<double>::map::const_iterator jt = targets.begin(); jt != targets.end(); jt++ ){
+      //for( shmap<double>::map::const_iterator jt = targets.begin(); jt != targets.end(); ++jt ){
 	string homolog = jt->first;
 	ret.push_back( homolog );
       }
@@ -631,7 +636,7 @@ list<string> scoring_scheme::get_all_homologs( alignment a ) {
   list <string> ret; 
   list <string> IDs = a.getIDs();  
   
-  for( list<string>::const_iterator it = IDs.begin(); it != IDs.end(); it++ ){
+  for( list<string>::const_iterator it = IDs.begin(); it != IDs.end(); ++it ){
     list <string> homologs = get_all_homologs( *it );
     copy( homologs.begin(), homologs.end(), back_inserter( ret) );
   }

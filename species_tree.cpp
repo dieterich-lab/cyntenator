@@ -50,7 +50,7 @@ binary_tree::binary_tree(string tree ){
   sum_of_edges = 0;
   
                                            //*************************
-  for( int i = 0; i != order.size(); i++){ // Insert Nodes and Edges
+  for( int i = 0; i != order.size(); ++i){ // Insert Nodes and Edges
                                            //*************************
     string subalign = order[i];
      string anr = intToString( i+1 );
@@ -62,7 +62,7 @@ binary_tree::binary_tree(string tree ){
      node* u = set_father( repl, v, w, get_branch_length( subalign ));  
      root = u;
      
-     for( int j = i; j != order.size(); j++){  // replace subalign with repl in the rest of the list
+     for( int j = i; j != order.size(); ++j){  // replace subalign with repl in the rest of the list
       order[j] = replace( order[j], subalign, repl );
       }
      
@@ -71,8 +71,8 @@ binary_tree::binary_tree(string tree ){
   sum_of_edges =  sum_of_subtree_edges(root->get_left_child()) +  sum_of_subtree_edges(root->get_right_child());
   
   vector<node*> leafs = get_leafs();
-  for( int i = 0; i != leafs.size(); i++){
-    for( int j = i+1; j < leafs.size(); j++){
+  for( int i = 0; i != leafs.size(); ++i){
+    for( int j = i+1; j < leafs.size(); ++j){
       node* a = leafs[i];
       node* b = leafs[j];
       node* lacoan = lca( leafs[i] , leafs[j]);
@@ -114,7 +114,7 @@ double binary_tree::distance_to_root( node* u ){
 
 vector<node*> binary_tree::get_leafs(){
   vector<node*> leafs;
-  for( map<string,node*>::const_iterator it = nodes.begin(); it != nodes.end(); it++ ){
+  for( map<string,node*>::const_iterator it = nodes.begin(); it != nodes.end(); ++it ){
     node* u = it->second;
     if( u->get_left_child() == 0)
       leafs.push_back( u );
@@ -132,8 +132,8 @@ node* binary_tree::lca( node* a, node* b){
   ancestors_a = get_ancestors( ancestors_a, a);
    vector<node*> ancestors_b;
   ancestors_b = get_ancestors( ancestors_b, b);
-  for( int i = 0 ; i != ancestors_a.size(); i++)
-    for( int j = 0 ; j != ancestors_b.size(); j++){
+  for( int i = 0 ; i != ancestors_a.size(); ++i)
+    for( int j = 0 ; j != ancestors_b.size(); ++j){
       if( ancestors_a[i] == ancestors_b[j] ){
 	return ancestors_a[i];
       }
@@ -151,14 +151,14 @@ node* binary_tree::lca( node* a, node* b){
 node*  binary_tree::lca( vector<string> alignment_species ){
   //cerr <<  alignment_species[0] << "\t"<<  nodes.size() <<"\n";
   
-  /*for( map<string,node*>::iterator it =nodes.begin(); it != nodes.end(); it++){
+  /*for( map<string,node*>::iterator it =nodes.begin(); it != nodes.end(); ++it){
     cerr << it->first << "\t" << (it->second)->get_name() << "\n";
     }*/
   
   node*  anc = nodes[ alignment_species[0] ];
   double subtree_length = 0; 
-  for( int i = 0; i < alignment_species.size(); i++  )
-    for( int j = i+1; j < alignment_species.size(); j++  ){
+  for( int i = 0; i < alignment_species.size(); ++i  )
+    for( int j = i+1; j < alignment_species.size(); ++j  ){
       node* child1 = nodes[ alignment_species[i] ];
       node* child2 = nodes[ alignment_species[j] ];
       node*  p = lca( child1, child2);
@@ -251,16 +251,15 @@ list<int> positions;
   vector<string> order;
   //nodes = map<string,node>();
   
-  for( int i = 0; i < tree.size(); i++ ){  // parse tree and store matching bracket pairs in order
+  for( int i = 0; i < tree.size(); ++i ){  // parse tree and store matching bracket pairs in order
     char c = tree[i];                      // (...):score is read by parsing to next not_paranthesis
     if( c == '(' )
       positions.push_back( i );
     
     if( c == ')' ){
-      i++;
-      while( i <=  tree.size() &&  !is_space(tree[i]) && !is_paranthese(tree[i])  )
-	i++;
-      i--;
+      ++i;
+      while( i < tree.size() &&  !is_space(tree[i]) && !is_paranthese(tree[i])  )	++i;
+      --i;
       int last = getLast( positions);
       string s = tree.substr(last, i -last +1);
       order.push_back(s);
@@ -299,7 +298,7 @@ string* split_subtree( string subtree){
   int count = 0;
   int pos[4];
   int j = 0;
-  for( int i = 0; i < subtree.size(); i++  ){
+  for( int i = 0; i < subtree.size(); ++i  ){
     if( is_space( subtree[i]) || is_paranthese( subtree[i] )  ){  // SEARCH FOR FIRST SPACE
       pos[j++] = i+1;
     }
@@ -342,7 +341,7 @@ double get_branch_length( string s){
 
 string get_species_name( string s){
    int i ;
-   for( i = 0; i < s.size(); i++ ){
+   for( i = 0; i < s.size(); ++i){
      if( s[i] == ':'){
        break;
      } 

@@ -136,7 +136,7 @@ int j = -1;
  * In case of the phylogenetic alignment modus, the species are read in the constructor
  * scoring_scheme::scoring_scheme() , which evokes the read species function. This 
  * associates each gene with a species in an 1:1 mapping. ATTENTION: in order to perform 
- * self-alignments gene identifiers and species names have to be moddified.
+ * self-alignments gene identifiers and species names have to be modified.
  *
  ************************************************************************************/
 
@@ -147,6 +147,13 @@ alignment_set::alignment_set( const char* file ){
   //species.push_back( file );
   nr = 0;
   ifstream infile( file );
+
+  if (infile.fail())
+  {
+    std::cerr << "Previous Alignment was empty (file: '" << file << " not found)! Aborting computation for this subtree!\n";
+    return;
+  }
+
   map <string, alignment> tmp;
  
   string input_type = "genome";
@@ -557,13 +564,13 @@ void alignment_set::update_cov( list<string>& ids,  map<string,int>& gene_covera
 	    //cerr << ":" << gene_id << ":" << endl;
 	    if( gene_id != "-")
 	      if( gene_coverage.find( gene_id ) != gene_coverage.end() ){ // increment the coverage
-		gene_coverage[ gene_id ]++;
-		//cout << gene_id << "\t" << gene_coverage[gene_id ] << endl;
+		      gene_coverage[ gene_id ]++;
+		      //cout << gene_id << "\t" << gene_coverage[gene_id ] << endl;
 	      }
 	      else{                                  // insert this gene in the table
-		gene_coverage.insert( make_pair( gene_id, 1) );
-		gene_coverage[ gene_id ] = 1;
-		//cout << gene_id << "\t" << gene_coverage[gene_id ] << endl;
+		      gene_coverage.insert( make_pair( gene_id, 1) );
+		      gene_coverage[ gene_id ] = 1;
+		       //cout << gene_id << "\t" << gene_coverage[gene_id ] << endl;
 	      }
     }
 }
